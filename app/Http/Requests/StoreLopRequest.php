@@ -11,7 +11,7 @@ class StoreLopRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreLopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'ten_lop' => 'required|string|max:255',
+            'id_chidoan' => 'required|exists:chi_doan,id',
         ];
     }
 }

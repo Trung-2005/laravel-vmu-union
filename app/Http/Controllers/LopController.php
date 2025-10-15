@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lop;
+use App\Models\ChiDoan;
 use App\Http\Requests\StoreLopRequest;
 use App\Http\Requests\UpdateLopRequest;
+
+
 
 class LopController extends Controller
 {
@@ -13,7 +16,8 @@ class LopController extends Controller
      */
     public function index()
     {
-        //
+        $dsLop = Lop::with('chiDoan')->paginate(10);
+        return view('lop.index', compact('dsLop'));
     }
 
     /**
@@ -29,7 +33,8 @@ class LopController extends Controller
      */
     public function store(StoreLopRequest $request)
     {
-        //
+        $lop = Lop::create($request->validated());
+        return response()->json($lop, 201);
     }
 
     /**

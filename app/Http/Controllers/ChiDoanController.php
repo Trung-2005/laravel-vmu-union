@@ -13,7 +13,8 @@ class ChiDoanController extends Controller
      */
     public function index()
     {
-        //
+        $dsChiDoan = ChiDoan::paginate(10);
+        return view('chidoan.index', compact('dsChiDoan'));
     }
 
     /**
@@ -29,7 +30,8 @@ class ChiDoanController extends Controller
      */
     public function store(StoreChiDoanRequest $request)
     {
-        //
+        $chiDoan = ChiDoan::create($request->validated());
+        return response()->json($chiDoan, 201);
     }
 
     /**

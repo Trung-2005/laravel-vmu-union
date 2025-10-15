@@ -11,7 +11,7 @@ class StoreChiDoanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class StoreChiDoanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'ten_chidoan' => 'required|string|max:255',
         ];
     }
 }

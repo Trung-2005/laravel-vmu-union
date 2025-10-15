@@ -22,8 +22,6 @@ class DoanVienController extends Controller
         $dsChiDoan = ChiDoan::all();
         $dsLop = Lop::all();
 
-        // 2. Trả về view 'manage_user' và gửi kèm biến $dsDoanVien
-        //    Sử dụng hàm compact() để tạo một mảng chứa các biến và giá trị của chúng.
         return view('manage_user', compact('dsDoanVien', 'dsChiDoan', 'dsLop'));
     }
 
