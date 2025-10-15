@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\DoanVien;
+use App\Models\Lop;
+use App\Models\ChiDoan;
 use App\Http\Requests\StoreDoanVienRequest;
 use App\Http\Requests\UpdateDoanVienRequest;
 
@@ -13,7 +15,16 @@ class DoanVienController extends Controller
      */
     public function index()
     {
-        //
+        // 1. Lấy dữ liệu từ database
+        $dsDoanVien = DoanVien::with('lop.chiDoan')->get();
+        
+        // Lấy thêm dữ liệu cho modal nếu cần
+        $dsChiDoan = ChiDoan::all();
+        $dsLop = Lop::all();
+
+        // 2. Trả về view 'manage_user' và gửi kèm biến $dsDoanVien
+        //    Sử dụng hàm compact() để tạo một mảng chứa các biến và giá trị của chúng.
+        return view('manage_user', compact('dsDoanVien', 'dsChiDoan', 'dsLop'));
     }
 
     /**
@@ -29,7 +40,8 @@ class DoanVienController extends Controller
      */
     public function store(StoreDoanVienRequest $request)
     {
-        //
+        $doanVien = DoanVien::create($request->validated());
+        return response()->json($doanVien, 201);
     }
 
     /**

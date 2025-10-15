@@ -9,7 +9,7 @@ use App\Http\Requests\UpdateDoanPhiRequest;
 class DoanPhiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource. -> display là trả về api
      */
     public function index()
     {
@@ -17,7 +17,7 @@ class DoanPhiController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource. -> form là trả về view
      */
     public function create()
     {

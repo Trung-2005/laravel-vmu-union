@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDoanVienRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreDoanVienRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,17 @@ class StoreDoanVienRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'ho_ten' => ['required', 'string', 'max:100'],
+            'ngay_sinh' => ['nullable', 'date'],
+            'gioi_tinh' => ['required', Rule::in(['Nam', 'Nữ', 'Khác'])],
+            'lop_id' => ['nullable', 'exists:lops,id'], // Giả sử bảng 'lops' có khóa chính là 'id'
+            'chidoan_id' => ['nullable', 'exists:chi_doans,id'], // Giả sử bảng 'chi_doans' có khóa chính là 'id'
+            'khoa' => ['required', 'integer'],
+            'email' => ['nullable', 'email', 'max:100', 'unique:doan_viens,email'],
+            'sdt' => ['nullable', 'string', 'max:15'],
+            'chuc_vu' => ['required', Rule::in(['doanvien', 'canbodoan', 'admin'])],
+            'nien_khoa' => ['nullable', 'integer'],
+            'password' => ['nullable', 'string', 'min:6'], // Thêm các rule khác nếu cần, ví dụ: 'confirmed'
         ];
     }
 }
