@@ -1,4 +1,5 @@
 {{-- Giả sử bạn có một file layout chính tên là app.blade.php --}}
+
 @extends('layouts.app')
 
 @section('content')
