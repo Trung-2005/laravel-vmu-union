@@ -592,8 +592,8 @@
 <script>
     // Lắng nghe sự kiện click trên button "Thêm"
     document.querySelector('.them').addEventListener('click', () => {
-        // Thu thập dữ liệu từ form (giả sử form có ID 'addMemberForm'; nếu không, bạn có thể thêm ID này vào <form> trong modal)
-        const form = document.getElementById('addMemberForm'); // Thêm ID này vào form nếu chưa có
+
+        const form = document.getElementById('addMemberForm');
         if (!form) {
             alert('Form không tìm thấy!');
             return;
@@ -606,15 +606,12 @@
         formData.forEach((value, key) => {
             dataStudent[key] = value;
         });
-        
-        // Thêm các trường đặc biệt nếu cần (ví dụ: checkbox cho role admin, nhưng trong code của bạn không có, nên bỏ qua hoặc điều chỉnh)
-        // dataStudent.admin_role = form.elements.admin_role ? (form.elements.admin_role.checked ? 1 : 0) : 0;
-        
+      
         // Lấy CSRF token từ meta tag (Laravel tự động thêm)
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         
         // Gửi fetch đến route Laravel
-        fetch('/add_doanvien', {  // Đường dẫn mới như bạn đề xuất
+        fetch('/add_doanvien', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -630,7 +627,7 @@
                 const modal = document.getElementById('addMemberModal');
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
-                // Reload trang để cập nhật danh sách
+                
                 location.reload();
             } else {
                 alert('Lỗi: ' + data.message);
