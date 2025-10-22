@@ -15,9 +15,7 @@ class DoanVienController extends Controller
      */
     public function index()
     {
-        // 1. Lấy dữ liệu từ database
-        $dsDoanVien = DoanVien::with('lop.chiDoan')->get();
-        
+        $dsDoanVien = DoanVien::with(['lop', 'chiDoan'])->paginate(10);
         // Lấy thêm dữ liệu cho modal nếu cần
         $dsChiDoan = ChiDoan::all();
         $dsLop = Lop::all();
@@ -38,8 +36,22 @@ class DoanVienController extends Controller
      */
     public function store(StoreDoanVienRequest $request)
     {
-        $doanVien = DoanVien::create($request->validated());
-        return response()->json($doanVien, 201);
+        $validatedData = $request->validated();
+
+        // Xử lý mật khẩu nếu có
+        if (!empty($validatedData['password'])) {
+            $validatedData['password'] = bcrypt($validatedData['password']);
+        } else {
+            // Loại bỏ password khỏi mảng nếu không được cung cấp
+            unset($validatedData['password']);
+        }
+
+        $doanVien = DoanVien::create($validatedData);
+        return response()->json([
+            'success' => true,
+            'message' => 'Đoàn viên đã được thêm thành công.',
+            'data' => $doanVien
+        ], 201);
     }
 
     /**

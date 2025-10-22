@@ -9,8 +9,6 @@ use App\Models\DoanVien;
 Route::get('/', function () {
     return view('index');
 });
-Route::get('/manage_user', function () {
-    return view('manage_user');
-});
+Route::get('/manage_user', [DoanVienController::class, 'index'])->name('manage_user.index');
 
 Route::post('/add_doanvien', [DoanVienController::class, 'store'])->name('add_doanvien');
