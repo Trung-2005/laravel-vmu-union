@@ -52,7 +52,7 @@
           <tbody>
             @forelse ($dsDoanVien as $doanVien)
             <tr
-              class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer open-modal"
+              class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer open-edit-modal"
               data-id="{{ $doanVien->id }}" {{-- Thêm data-id để xác định đoàn viên khi click --}}
             >
               <td class="py-2 px-4 text-sm">{{ $doanVien->id }}</td>
@@ -201,256 +201,170 @@
 
     <!-- Modal sửa/thêm thành viên -->
     <div
-      id="fixMemberModal"
+      id="editMemberModal"
       class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 transition-opacity duration-300"
     >
       <div
         class="relative bg-white w-[85%] h-[85%] rounded-lg shadow-lg p-6 overflow-y-auto animate-fadeIn"
       >
-        <!-- Nút đóng -->
-        <button
-          id="closeModalY"
-          class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl"
-        >
-          &times;
-        </button>
-
         <h2 class="text-2xl font-semibold mb-4 text-center text-blue-600">
-          Sửa thành viên
+          Chỉnh sửa thông tin Đoàn viên
         </h2>
+        {{-- Form sửa đoàn viên --}}
+        <form id="editMemberForm" method="POST">
+          @csrf
+          @method('PUT') {{-- Báo cho Laravel đây là request PUT --}}
+          
+          {{-- Input ẩn để lưu ID của đoàn viên đang sửa --}}
+          <input type="hidden" id="edit_doanvien_id" name="edit_doanvien_id">
 
-        <!-- Form chia 3 cột -->
-        <div class="flex w-full gap-5 justify-center items-start">
-          <!-- Cột 1 -->
-          <div class="flex flex-col gap-3 w-1/3">
-            <label class="text-sm font-medium">Mã Sinh Viên</label>
-            <input
-              type="text"
-              class="input-style"
-              placeholder="Nhập mã sinh viên"
-            />
-
-            <label class="text-sm font-medium">Họ và Tên</label>
-            <input
-              type="text"
-              class="input-style"
-              placeholder="Nhập họ và tên"
-            />
-
-            <label class="text-sm font-medium">Ngày Sinh</label>
-            <input type="date" class="input-style" />
-
-            <label class="text-sm font-medium">Giới tính</label>
-            <select class="input-style">
-              <option>Giới tính</option>
-              <option>Nam</option>
-              <option>Nữ</option>
-            </select>
-          </div>
-
-          <!-- Cột 2 -->
-          <div class="flex flex-col gap-3 w-1/3">
-            <label class="text-sm font-medium">Khoa/Viện</label>
-            <select class="input-style">
-              <option value="none">Chọn khoa/viện</option>
-                <option value="1">Khoa Hàng hải</option>
-                <option value="2">Khoa Máy tàu biển</option>
-                <option value="3">Khoa Công trình thủy</option>
-                <option value="4">Khoa Điện - Điện tử tàu biển</option>
-                <option value="5">Khoa Kinh tế</option>
-                <option value="6">Khoa Quản trị - Tài chính</option>
-                <option value="7">Khoa Công nghệ thông tin</option>
-                <option value="8">Khoa Đóng tàu</option>
-                <option value="9">Khoa Ngoại ngữ</option>
-                <option value="10">Viện Cơ khí</option>
-            </select>
-
-            <label class="text-sm font-medium">Lớp</label>
-            <select class="input-style">
-              <option value="0">Chọn lớp</option>
-              <optgroup label="Khoa Hàng hải">
-                    <option value="1">Điều khiển tàu biển</option>
-                    <option value="2">Khai thác máy tàu biển</option>
-                    <option value="3">Luật &amp; Bảo hiểm Hàng hải</option>
-                </optgroup>
-
-                <optgroup label="Khoa Máy tàu biển">
-                    <option value="4">Khai thác máy tàu biển</option>
-                    <option value="5">Kỹ thuật môi trường</option>
-                </optgroup>
-
-                <optgroup label="Khoa Công trình thủy">
-                    <option value="6">Xây dựng công trình thủy</option>
-                    <option value="7">Xây dựng dân dụng và công nghiệp</option>
-                    <option value="8">Kỹ thuật an toàn hàng hải</option>
-                    <option value="9">Kỹ thuật cầu đường</option>
-                </optgroup>
-
-                <optgroup label="Khoa Điện - Điện tử tàu biển">
-                    <option value="10">Điện tự động tàu thủy</option>
-                    <option value="11">Điện tử viễn thông</option>
-                    <option value="12">Điện tự động công nghiệp</option>
-                </optgroup>
-
-                <optgroup label="Khoa Kinh tế">
-                    <option value="13">Kinh tế vận tải biển</option>
-                    <option value="14">Quản trị kinh doanh</option>
-                    <option value="15">Kinh tế ngoại thương</option>
-                    <option value="16">Tài chính kế toán</option>
-                    <option value="17">Kinh doanh bảo hiểm</option>
-                    <option value="18">Logistics và Quản trị chuỗi cung ứng</option>
-                </optgroup>
-
-                <optgroup label="Khoa Quản trị - tài chính">
-                    <option value="19">Quản trị kinh doanh</option>
-                    <option value="20">Quản trị Tài chính kế toán</option>
-                </optgroup>
-
-                <optgroup label="Khoa Công nghệ thông tin">
-                    <option value="21">Công nghệ thông tin</option>
-                    <option value="22">Truyền thông và mạng máy tính</option>
-                    <option value="23">Kỹ thuật phần mềm</option>
-                </optgroup>
-
-                <optgroup label="Khoa Đóng tàu">
-                    <option value="24">Thiết kế tàu thủy</option>
-                    <option value="25">Đóng tàu thủy</option>
-                </optgroup>
-
-                <optgroup label="Khoa Ngoại ngữ">
-                    <option value="26">Ngôn ngữ Anh</option>
-                    <option value="27">Tiếng Anh thương mại</option>
-                </optgroup>
-
-                <optgroup label="Viện Cơ khí">
-                    <option value="28">Thiết kế và Sửa chữa máy tàu thủy</option>
-                    <option value="29">Máy nâng chuyển</option>
-                </optgroup>
-            </select>
-
-            <label class="text-sm font-medium">Niên khóa</label>
-            <select class="input-style">
-              <option value="none">Niên khóa</option>
-              <option value="61">61</option>
-              <option value="62">62</option>
-              <option value="63">63</option>
-              <option value="64">64</option>
-              <option value="65">65</option>
-              <option value="66">66</option>
-            </select>
-
-            <label class="text-sm font-medium">Chức vụ</label>
-            <select class="input-style">
-              <option value="none">Chức vụ</option>
-              <option value="admin">Quản trị viên</option>
-              <option value="doanvien">Đoàn viên</option>
-              <option value="canbodoan">Cán bộ Đoàn</option>
-            </select>
-          </div>
-
-          <!-- Cột 3 -->
-          <div class="flex flex-col gap-3 w-1/3">
-            <label class="text-sm font-medium">Email</label>
-            <input
-              type="email"
-              class="input-style"
-              placeholder="example@gmail.com"
-            />
-
-            <label class="text-sm font-medium">Số điện thoại</label>
-            <input type="text" class="input-style" placeholder="0123456789" />
-
-            <label class="text-sm font-medium">Mật khẩu</label>
-            <input
-              type="password"
-              class="input-style"
-              placeholder="Nhập mật khẩu"
-            />
-
-            <label class="text-sm font-medium">Xác nhận mật khẩu</label>
-            <input
-              type="password"
-              class="input-style"
-              placeholder="Nhập lại mật khẩu"
-            />
-          </div>
-        </div>
-
-        <!-- Hồ sơ Đoàn viên -->
-        <hr class="w-full border-gray-300 my-6" />
-        <h5 class="text-lg font-semibold text-gray-700 mb-4">
-          Hồ sơ Đoàn Viên
-        </h5>
-
-        <div id="detail-second-wrapper" class="grid grid-cols-3 gap-5">
-          <!-- Cột 1 -->
-          <div class="flex flex-col gap-3">
-            <label class="text-sm font-medium">Ngày vào Đoàn</label>
-            <input type="date" class="input-style" />
-
-            <label class="text-sm font-medium">Nơi kết nạp</label>
-            <input
-              type="text"
-              class="input-style"
-              placeholder="Nhập nơi kết nạp"
-            />
-
-            <label class="text-sm font-medium">Ảnh hồ sơ</label>
-            <input
-              type="file"
-              accept=".jpg,.png,.pdf"
-              class="w-full border rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-white file:bg-blue-600 hover:file:bg-blue-700"
-            />
-          </div>
-
-          <!-- Cột 2 -->
-          <div class="flex flex-col gap-3">
-            <label class="text-sm font-medium"
-              >Nơi sinh hoạt Đoàn (Thành phố)</label
-            >
-            <input
-              type="text"
-              class="input-style"
-              placeholder="Tên thành phố"
-            />
-
-            <label class="text-sm font-medium"
-              >Nơi sinh hoạt Đoàn (Quận/Huyện)</label
-            >
-            <input type="text" class="input-style" placeholder="Quận/Huyện" />
-          </div>
-
-          <!-- Cột 3 -->
-          <div class="flex flex-col items-center justify-start text-gray-600">
-            <h6 class="font-medium mb-2">Hình ảnh hồ sơ hiển thị tại đây:</h6>
-            <div
-              class="w-[150px] h-[150px] border-2 border-dashed border-gray-400 rounded-lg flex justify-center items-center"
-            >
-              <span class="text-sm text-gray-400">Chưa có ảnh</span>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="flex flex-col gap-4">
+              <div>
+                <label for="edit_ho_ten" class="block mb-1 text-sm font-medium"
+                  >Họ và Tên <span class="text-red-500">*</span></label
+                >
+                <input
+                  name="ho_ten"
+                  id="edit_ho_ten"
+                  type="text"
+                  class="input-style"
+                  placeholder="Nhập họ và tên"
+                />
+                <span class="text-red-500 text-sm" id="edit_ho_ten_error"></span>
+              </div>
+              <div>
+                <label for="edit_ngay_sinh" class="block mb-1 text-sm font-medium"
+                  >Ngày Sinh</label
+                >
+                <input
+                  name="ngay_sinh"
+                  id="edit_ngay_sinh"
+                  type="date"
+                  class="input-style"
+                />
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_ngay_sinh"></span>
+              </div>
+              <div>
+                <label for="edit_gioi_tinh" class="block mb-1 text-sm font-medium"
+                  >Giới tính <span class="text-red-500">*</span></label
+                >
+                <select
+                  name="gioi_tinh"
+                  id="edit_gioi_tinh"
+                  class="input-style"
+                >
+                  <option value="">Chọn giới tính</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
+                </select>
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_gioi_tinh"></span>
+              </div>
+              <div>
+                <label for="edit_khoa" class="block mb-1 text-sm font-medium"
+                  >Khóa học <span class="text-red-500">*</span></label
+                >
+                <input
+                  name="khoa"
+                  id="edit_khoa"
+                  type="text"
+                  class="input-style"
+                  placeholder="Ví dụ: 65"
+                />
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_khoa"></span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-4">
+              <div>
+                <label for="edit_chidoan_id" class="block mb-1 text-sm font-medium">Chi đoàn (Khoa/Viện)</label>
+                <select name="chidoan_id" id="edit_chidoan_id" class="input-style">
+                  <option value="">Chọn chi đoàn</option>
+                  @foreach ($dsChiDoan as $chiDoan)
+                    <option value="{{ $chiDoan->id }}">{{ $chiDoan->ten }}</option>
+                  @endforeach
+                </select>
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_chidoan_id"></span>
+              </div>
+              <div>
+                <label for="edit_lop_id" class="block mb-1 text-sm font-medium">Lớp</label>
+                <select name="lop_id" id="edit_lop_id" class="input-style">
+                  <option value="">Chọn lớp</option>
+                  @foreach ($dsLop as $lop)
+                    <option value="{{ $lop->id }}">{{ $lop->ten }}</option>
+                  @endforeach
+                </select>
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_lop_id"></span>
+              </div>
+              <div>
+                <label for="edit_nien_khoa" class="block mb-1 text-sm font-medium">Niên khóa</label>
+                <input
+                  name="nien_khoa"
+                  id="edit_nien_khoa"
+                  type="number"
+                  class="input-style"
+                  placeholder="Ví dụ: 2020"
+                />
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_nien_khoa"></span>
+              </div>
+              <div>
+                <label for="edit_chu_vu" class="block mb-1 text-sm font-medium">Chức vụ <span class="text-red-500">*</span></label>
+                <select name="chuc_vu" id="edit_chuc_vu" class="input-style">
+                  <option value="doanvien">Đoàn viên</option>
+                  <option value="canbodoan">Cán bộ Đoàn</option>
+                  <option value="admin">Quản trị viên</option>
+                </select>
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_chuc_vu"></span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-4">
+              <div>
+                <label for="edit_email" class="block mb-1 text-sm font-medium">Email</label>
+                <input name="email" id="edit_email" type="email" class="input-style" placeholder="example@gmail.com" />
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_email"></span>
+              </div>
+              <div>
+                <label for="edit_sdt" class="block mb-1 text-sm font-medium">Số điện thoại</label>
+                <input name="sdt" id="edit_sdt" type="tel" class="input-style" placeholder="Số điện thoại" />
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_sdt"></span>
+              </div>
+              <div>
+                <label for="edit_password" class="block mb-1 text-sm font-medium">Mật khẩu mới</label>
+                <input name="password" id="edit_password" type="password" class="input-style" placeholder="Bỏ trống nếu không đổi" />
+                <span class="text-red-500 text-xs mt-1 error-message" id="error_edit_password"></span>
+              </div>
+              <div>
+                <label for="edit_password_confirmation" class="block mb-1 text-sm font-medium">Xác nhận mật khẩu mới</label>
+                <input name="password_confirmation" id="edit_password_confirmation" type="password" class="input-style" placeholder="Nhập lại mật khẩu mới" />
+                {{-- Không cần span lỗi cho trường 'password_confirmation' vì lỗi sẽ hiện ở 'password' --}}
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Footer -->
-        <div class="flex justify-end items-center gap-3 mt-6">
+          {{-- Nút đóng và nút cập nhật --}}
           <button
             type="button"
-            onclick="deleteUser()"
-            class="px-5 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"
+            id="closeEditModalX"
+            class="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold"
           >
-            <i class="bi bi-trash mr-1"></i> Xóa tài khoản
+           &times;
           </button>
-
-          <button
-            type="button"
-            onclick="saveDetailChanges()"
-            class="px-5 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-600 hover:text-white transition"
-          >
-            <i class="bi bi-save mr-1"></i> Lưu thay đổi
-          </button>
-        </div>
-
-        <!-- Nút thêm nằm sát phải dưới cùng -->
+          <div class="mt-6 flex justify-end items-center gap-3">
+            <button
+              type="button"
+              id="cancelEditBtn"
+              class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              class="them px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Lưu Cập nhật
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -474,7 +388,8 @@
       }
     </style>
     
-  </body><script>
+  </body>
+  <script>
     // Biến toàn cục
     const addMemberBtn = document.querySelector('.add'); // nút thêm thành viên
     const addModal = document.getElementById('addMemberModal'); // nút thêm thành viên ở trong modal
@@ -500,16 +415,118 @@
 
     // Hàm submit form thêm thành viên
     async function submitForm(e) {
-        e.preventDefault();
-        setLoading(true);
+      e.preventDefault();
+      setLoading(true);
 
-        const formData = new FormData(addMemberForm);
+      const formData = new FormData(addMemberForm);
+      const data = Object.fromEntries(formData.entries());
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+      try {
+        const response = await fetch("{{ route('add_doanvien') }}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        // Lưu phản hồi từ server vào biến res
+        const result = await response.json();
+
+        if (response.status === 201) {
+          alert(result.message);
+          closeModal();
+          addMemberForm.reset();
+          location.reload();
+        } else if (response.status === 422) {
+          const errors = Object.values(result.errors || {}).flat().join('\n'); // chuỗi chứa tất cả các lỗi validation từ server
+          alert(`Thêm thất bại:\n${result.message}\n${errors}`); // hiển thị lỗi
+        } else {
+          alert(result.message || 'Lỗi không xác định.'); // các lỗi khác
+        }
+      } catch (error) {
+        console.error('Lỗi Fetch:', error);
+        alert('Đã xảy ra lỗi khi gửi yêu cầu.');
+      } finally {
+        setLoading(false); // set lại trạng thái loading
+      }
+    }
+
+    // Các sự kiện
+    addMemberBtn.addEventListener('click', () => {
+      addModal.classList.remove('hidden');
+      addModal.classList.add('flex');
+    });
+
+    closeModalX.addEventListener('click', closeModal);
+    cancelAddBtn.addEventListener('click', closeModal);
+    addMemberForm.addEventListener('submit', submitForm); // sự kiện submit form thêm thành viên
+
+
+    
+    // Biến modal sửa
+    const editModal = document.getElementById('editMemberModal');
+    const editForm = document.getElementById('editMemberForm');
+    const editDoanVienIdInput = document.getElementById('edit_doanvien_id');
+
+    // Hàm đóng modal sửa
+    function closeEditModal() {
+        editModal.classList.add('hidden');
+        editModal.classList.remove('flex');
+        editForm.reset(); // Reset form
+        document.querySelectorAll('.error-message').forEach(span => span.textContent = ''); // Xóa lỗi cũ
+    }
+
+    // Hàm fetch dữ liệu đoàn viên và điền vào modal
+    async function loadDoanVienData(id) {
+        try {
+            const response = await fetch(`{{ route('get_doanvien', ':id') }}`.replace(':id', id), {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                // Điền dữ liệu vào form
+                editDoanVienIdInput.value = data.id;
+                document.getElementById('edit_ho_ten').value = data.ho_ten || '';
+                document.getElementById('edit_ngay_sinh').value = data.ngay_sinh || '';
+                document.getElementById('edit_gioi_tinh').value = data.gioi_tinh || '';
+                document.getElementById('edit_khoa').value = data.khoa || '';
+                document.getElementById('edit_chidoan_id').value = data.chidoan_id || '';
+                document.getElementById('edit_lop_id').value = data.lop_id || '';
+                document.getElementById('edit_nien_khoa').value = data.nien_khoa || '';
+                document.getElementById('edit_chuc_vu').value = data.chuc_vu || '';
+                document.getElementById('edit_email').value = data.email || '';
+                document.getElementById('edit_sdt').value = data.sdt || '';
+                // Password không điền (để trống)
+                editModal.classList.remove('hidden');
+                editModal.classList.add('flex');
+            } else {
+                alert('Không thể tải dữ liệu đoàn viên.');
+            }
+        } catch (error) {
+            console.error('Lỗi fetch:', error);
+            alert('Đã xảy ra lỗi khi tải dữ liệu.');
+        }
+    }
+
+    // Hàm submit form sửa
+    async function submitEditForm(e) {
+        e.preventDefault();
+        const formData = new FormData(editForm);
         const data = Object.fromEntries(formData.entries());
+        const id = data.edit_doanvien_id; // Lấy ID từ input ẩn
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+        // Xóa lỗi cũ
+        document.querySelectorAll('.error-message').forEach(span => span.textContent = '');
+
         try {
-            const response = await fetch("{{ route('add_doanvien') }}", {
-                method: 'POST',
+            const response = await fetch(`{{ route('update_doanvien', ':id') }}`.replace(':id', id), {
+                method: 'POST', // Laravel xử lý PUT qua @method
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
@@ -517,38 +534,39 @@
                 },
                 body: JSON.stringify(data)
             });
-
-            // Lưu phản hồi từ server vào biến res
             const result = await response.json();
-
-            if (response.status === 201) {
+            if (response.ok) {
                 alert(result.message);
-                closeModal();
-                addMemberForm.reset();
-                location.reload();
+                closeEditModal();
+                location.reload(); // Reload để cập nhật bảng
             } else if (response.status === 422) {
-                const errors = Object.values(result.errors || {}).flat().join('\n'); // chuỗi chứa tất cả các lỗi validation từ server
-                alert(`Thêm thất bại:\n${result.message}\n${errors}`); // hiển thị lỗi
+                // Hiển thị lỗi validation
+                for (const [field, messages] of Object.entries(result.errors || {})) {
+                    const errorSpan = document.getElementById(`error_edit_${field}`);
+                    if (errorSpan) errorSpan.textContent = messages.join(', ');
+                }
+                alert('Vui lòng kiểm tra các lỗi và thử lại.');
             } else {
-                alert(result.message || 'Lỗi không xác định.'); // các lỗi khác
+                alert(result.message || 'Lỗi không xác định.');
             }
         } catch (error) {
             console.error('Lỗi Fetch:', error);
             alert('Đã xảy ra lỗi khi gửi yêu cầu.');
-        } finally {
-            setLoading(false); // set lại trạng thái loading
         }
     }
 
-    // Các sự kiện
-    addMemberBtn.addEventListener('click', () => {
-        addModal.classList.remove('hidden');
-        addModal.classList.add('flex');
+    // Event listeners
+    document.querySelectorAll('.open-edit-modal').forEach(row => { // Giả sử hàng bảng có class này và data-id
+        row.addEventListener('click', () => {
+            const id = row.getAttribute('data-id');
+            loadDoanVienData(id);
+        });
     });
 
-    closeModalX.addEventListener('click', closeModal);
-    cancelAddBtn.addEventListener('click', closeModal);
-    addMemberForm.addEventListener('submit', submitForm); // sự kiện submit form thêm thành viên
-</script>
+    document.getElementById('closeEditModalX').addEventListener('click', closeEditModal);
+    document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
+    editForm.addEventListener('submit', submitEditForm);
 
+
+  </script>
 </html>

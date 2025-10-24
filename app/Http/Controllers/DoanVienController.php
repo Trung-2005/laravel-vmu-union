@@ -7,7 +7,6 @@ use App\Models\Lop;
 use App\Models\ChiDoan;
 use App\Http\Requests\StoreDoanVienRequest;
 use App\Http\Requests\UpdateDoanVienRequest;
-
 class DoanVienController extends Controller
 {
     /**
@@ -75,7 +74,19 @@ class DoanVienController extends Controller
      */
     public function update(UpdateDoanVienRequest $request, DoanVien $doanVien)
     {
-        //
+        $vadidateData = $request->validated();
+        // Xử lý mật khẩu nếu có
+        if (!empty($vadidateData['password'])) {
+            $vadidateData['password'] = bcrypt($vadidateData['password']);
+        } else {
+            // Loại bỏ password khỏi mảng nếu không được cung cấp
+            unset($vadidateData['password']);      
+        }
+        $doanVien->update($vadidateData);
+        return response()->json([
+            'success' => true,
+            'message' => 'Đoàn viên đã được cập nhật thành công.'
+        ]);
     }
 
     /**

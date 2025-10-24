@@ -36,4 +36,14 @@ class StoreDoanVienRequest extends FormRequest
             'password' => ['nullable', 'string', 'min:6'], // Thêm các rule khác nếu cần, ví dụ: 'confirmed'
         ];
     }
+
+    
+     public function messages(): array
+    {
+        return [
+            'ho_ten.required' => 'Họ tên là bắt buộc.',
+            'email.unique' => 'Email đã tồn tại.',
+            // Thêm các message khác nếu cần
+        ];
+    }
 }
